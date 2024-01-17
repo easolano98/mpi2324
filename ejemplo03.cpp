@@ -3,6 +3,8 @@
 #include <stdio.h>  // Incluimos la biblioteca para printf
 #include <string>
 
+#define  NUM_ITERACIONES 50
+
 int sumar(int* tmp, int n){
     int suma = 0;
     for(int i = 0; i < n; i++){
@@ -11,7 +13,7 @@ int sumar(int* tmp, int n){
     return suma;
 }
 
-int main(int argc, char** argv) {
+int suma_mpi(int argc, char** argv){
 
     MPI_Init(&argc, &argv);
 
@@ -62,13 +64,20 @@ int main(int argc, char** argv) {
         int suma_parcial = sumar(data, 25);
 
 
-        std::printf("RANK_%d enviando suma parcial %d\n", rank, suma_parcial);
+        std::printf("RANK_%d enviando suma parcials %d\n", rank, suma_parcial);
         MPI_Send(&suma_parcial, 1, MPI_INT, 0,0,MPI_COMM_WORLD);
 
     }
 
 
     MPI_Finalize();
+
+    return 0;
+}
+
+int main() {
+
+
 
     return 0;
 }

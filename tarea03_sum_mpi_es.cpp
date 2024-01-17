@@ -65,14 +65,14 @@ int main(int argc, char** argv) {
 
     }else{
 
-        std::printf("RANK_%d recibiendo datos\n ", rank);
+
 
         MPI_Recv(data, 25, MPI_INT , 0  , 0  , MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
         int suma_parcial = sumar(data, 25);
 
 
-        std::printf("RANK_%d enviando suma parcial %d\n", rank, suma_parcial);
+
         MPI_Send(&suma_parcial, 1, MPI_INT, 0,0,MPI_COMM_WORLD);
 
 
