@@ -13,10 +13,12 @@ int sumar(int* tmp, int n){
     return suma;
 }
 
-int * generar_vector(){
+int* generar_vector(){
+    int * data=new int[NUM_ITERACIONES];
     for (int i = 0; i<NUM_ITERACIONES; i++){
         data[i] = i;
     }
+    return data;
 }
 
 
@@ -31,7 +33,7 @@ int main(int argc, char** argv) {
 
     if(rank == 0){
 
-        std::vector<int> vct= generar_vector();
+       int *data= generar_vector();
        // std::vector<int> data= ;
 
         std::printf("total ranks:%d\n ", nprocs);
@@ -39,7 +41,6 @@ int main(int argc, char** argv) {
         int count=NUM_ITERACIONES/nprocs;
         int val_adicional=NUM_ITERACIONES%nprocs;
 
-        int * data= vct.data();
 
 
         for(int rank_id = 1; rank_id < nprocs; rank_id++){
@@ -57,10 +58,11 @@ int main(int argc, char** argv) {
             MPI_Recv(&suma_ranks[rank_id], 1, MPI_INT, rank_id, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
 
+        std::printf("Sumas parciales: %d, %d, %d, %d\n", suma_ranks[0],suma_ranks[1],suma_ranks[2],suma_ranks[3]);
 
         int sumaTotal = sumar(suma_ranks,nprocs);
 
-        std::printf("sumas Total: %d", sumaTotal);
+        std::printf("sumas Total: %d\n", sumaTotal);
 
     }else{
         int contador[1];
