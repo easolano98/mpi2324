@@ -22,12 +22,12 @@ int main(int argc, char** argv) {
             data[i] = i;
         }
 
-        for(int i=1; i<nprocs; i++){
+        for(int i=0; i<nprocs; i++){
             std::printf("Enviando datos rank:%d\n ", i);
             MPI_Send(data //datos
                     , 100 //count
                     , MPI_INT  //tipo de dato
-                    , 1 //rank-destino
+                    , i //rank-destino
                     , 0 //TAG
                     , MPI_COMM_WORLD //grupo
             );
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
         );
         std::string str ="";
         for(int i = 0; i<10; i++){
-            str=str +std::to_string(data[i])+",";
+            str=str+std::to_string(data[i])+",";
 
         }
         std::printf("RANK_%d datos recibinedo ==>%s\n", rank, str.c_str());
