@@ -42,11 +42,10 @@ int main(int argc, char** argv) {
         int * data= vct.data();
 
 
-
-
         for(int rank_id = 1; rank_id < nprocs; rank_id++){
             std::printf("RANK_0 enviando datos a RANK_%d\n ", rank_id);
-            int start = rank_id*count;
+            int start = rank_id*count+val_adicional;
+            MPI_Send(&count, 1, MPI_INT, rank_id, 1, MPI_COMM_WORLD);
             MPI_Send(&data[start], count, MPI_INT, rank_id, 0, MPI_COMM_WORLD);
         }
 
@@ -64,20 +63,23 @@ int main(int argc, char** argv) {
         std::printf("sumas Total: %d", sumaTotal);
 
     }else{
+        int contador[1];
+//        MPI_Status status;
+        MPI_Recv(contador, 1, MPI_INT , 0  , 1  , MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        int * data=new int[contador[0]];
+
+        MPI_Recv(data, contador[0], MPI_INT , 0  , 0  , MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
 
 
-        MPI_Recv(data, 25, MPI_INT , 0  , 0  , MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+//        MPI_Get_count(&status, MPI_INT, &contador);
 
-        int suma_parcial = sumar(data, 25);
-
-
+        int suma_parcial = sumar(data, contador[0]);
 
         MPI_Send(&suma_parcial, 1, MPI_INT, 0,0,MPI_COMM_WORLD);
 
-
     }
-
 
     MPI_Finalize();
 
