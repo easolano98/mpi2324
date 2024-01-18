@@ -5,5 +5,6 @@ sudo apt-get update
 sudo apt-get install libopenmpi-dev
 
 ## Ejecuciones
-mpicxx ejemplo02.cpp -o ejemplo02
-mpiexec -n 4 ./ejemplo02
+mpicxx tarea03_sum_mpi_es.cpp -o tarea03_sum_mpi_es
+mpiexec -n 4 ./tarea03_sum_mpi_es
+

@@ -55,11 +55,13 @@ int main(int argc, char** argv) {
 
         std::printf("total ranks:%d\n ", nprocs);
 
-        int count=NUM_ITERACIONES/nprocs;
+        //int count=NUM_ITERACIONES/nprocs;
+        int count=data_vect.size()/nprocs;
 
         std::printf("counts:%d\n ", count);
 
-        int val_adicional=NUM_ITERACIONES%nprocs;
+//        int val_adicional=NUM_ITERACIONES%nprocs;
+        int val_adicional=data_vect.size()%nprocs;
 
         for(int rank_id = 1; rank_id < nprocs; rank_id++){
             std::printf("RANK_0 enviando datos a RANK_%d\n ", rank_id);
@@ -95,12 +97,12 @@ int main(int argc, char** argv) {
 
         MPI_Recv(data, contador[0], MPI_INT , 0  , 0  , MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-        std::string str ="";
-        for(int i = 0; i<contador[0]; i++){
-            str=str+std::to_string(data[i])+",";
-
-        }
-        std::printf("RANK_%d datos recibinedo ==>%s\n", rank, str.c_str());
+//        std::string str ="";
+//        for(int i = 0; i<contador[0]; i++){
+//            str=str+std::to_string(data[i])+",";
+//
+//        }
+//        std::printf("RANK_%d datos recibinedo ==>%s\n", rank, str.c_str());
 
 
         int suma_parcial = sumar(data, contador[0]);
