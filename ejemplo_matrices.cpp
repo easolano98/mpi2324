@@ -5,7 +5,7 @@
 #include <vector>
 #include <mpi.h>
 #include <math.h>
-
+#include <stdio.h>
 
 #define MATRIX_DIMENSION 25
 
@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
        c.resize(MATRIX_DIMENSION);
        std::printf("resultado: \n");
        for(int i=0; i<MATRIX_DIMENSION; i++){
-           std::printf("%.0f", c[i]);
+           std::printf("%.0f, ", c[i]);
        }
         std::printf("\n");
     }
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
         MPI_Scatter(nullptr, 0, MPI_DOUBLE,
                     A_local.data(), MATRIX_DIMENSION*rows_per_rank, MPI_DOUBLE,
                     0, MPI_COMM_WORLD);
-        std::printf("RANK_%d: [%.0f..%.0f]\n", rank, A_local[0], A_local.back());
+        std::printf("RANK_%d:[%.0f..%.0f]\n", rank, A_local[0], A_local.back());
         //recibir el vector b
         MPI_Bcast(b_local.data(), MATRIX_DIMENSION, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -98,11 +98,12 @@ int main(int argc, char** argv) {
         //realizar el calculo:c= A x b
         int rows_per_rank_tmp=rows_per_rank;
 
-        matrix_mult(A_local.data(), b_local.data(), c_local.data(), rows_per_rank_tmp, MATRIX_DIMENSION);
 
         if(rank==nprocs-1){
             rows_per_rank_tmp= MATRIX_DIMENSION-(rank* rows_per_rank);
         }
+        matrix_mult(A_local.data(), b_local.data(), c_local.data(), rows_per_rank_tmp, MATRIX_DIMENSION);
+
         //enviar el resultado parcial
         MPI_Gather(c_local.data(), rows_per_rank, MPI_DOUBLE,
                    nullptr, 0, MPI_DOUBLE,
