@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
 
         //realizar el calculo:c= A x b
 
-        matrix_mult((A.data(), b.data(), c.data(), rows_per_rank, MATRIX_DIMENSION));
+        matrix_mult (A.data(), b.data(), c.data(), rows_per_rank, MATRIX_DIMENSION);
 
         //recibir los resultados parciales
         MPI_Gather(MPI_IN_PLACE, 0, MPI_DOUBLE,
@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
         //realizar el calculo:c= A x b
         int rows_per_rank_tmp=rows_per_rank;
 
-        matrix_mult((A_local.data(), b_local.data(), c_local.data(), rows_per_rank_tmp, MATRIX_DIMENSION));
+        matrix_mult(A_local.data(), b_local.data(), c_local.data(), rows_per_rank_tmp, MATRIX_DIMENSION);
 
         if(rank==nprocs-1){
             rows_per_rank_tmp= MATRIX_DIMENSION-(rank* rows_per_rank);
