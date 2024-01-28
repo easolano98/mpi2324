@@ -33,6 +33,10 @@ int main(int argc, char** argv){
     int real_size;
     int padding=0;
 
+    int suma_parcial;
+    int suma_total=0;
+
+
     if(MAX_ITEMS%nprocs!=0){
         real_size =std::ceil((double)MAX_ITEMS/nprocs) * nprocs;
         block_size=real_size/nprocs;
@@ -53,14 +57,8 @@ int main(int argc, char** argv){
                     MPI_IN_PLACE, 0, MPI_INT,
                     0, MPI_COMM_WORLD);
 
-        int suma_parcial=sumar(data.data(), block_size);
+        suma_parcial=sumar(data.data(), block_size);
         std::printf("RANK_%d: suma parcial = %d\n", rank, suma_parcial);
-        int suma_total=0;
-
-        MPI_Reduce(MPI_IN_PLACE, &suma_parcial, 1, MPI_INT,
-                   MPI_SUM, 0, MPI_COMM_WORLD);
-
-        std::printf("SUMA TOTAL = %d\n",suma_total);
 
     }else {
         std::vector<int> data_local(block_size);
@@ -74,13 +72,19 @@ int main(int argc, char** argv){
             block_size_tmp = block_size - padding;
         }
 
-        int suma_parcial = sumar(data_local.data(), block_size_tmp);
+        suma_parcial = sumar(data_local.data(), block_size_tmp);
         std::printf("RANK_%d: suma parcial = %d\n", rank, suma_parcial);
 
-        MPI_Reduce(&suma_parcial, nullptr , 1, MPI_INT,
-                   MPI_SUM, 0, MPI_COMM_WORLD);
+
 
     }
+    MPI_Reduce(&suma_parcial, &suma_total , 1, MPI_INT,
+               MPI_SUM, 0, MPI_COMM_WORLD);
+
+    if (rank == 0)
+        std::printf("Resultado: %d\n", suma_total);
+
+
     MPI_Finalize();
 
     return 0;
