@@ -40,28 +40,34 @@ int main (int argc, char** argv  ){
     MPI_Comm_rank( MPI_COMM_WORLD , &rank);
     MPI_Comm_size( MPI_COMM_WORLD , &nprocs);
 
-   
+    
     int max_local=0;
+    int real_size;
     int block_size;
+    int padding;
     if(rank==0){
          
         std::vector<int> elementos=read_file();
 
-        block_size=elementos.size()/nprocs;
-        int diferencia=elementos.size()%nprocs;
         int * data= elementos.data();
-
-        for(int i=1;i<nprocs;i++){
+        
+        real_size = std::ceil((double)elementos.size() / nprocs) * nprocs;
+        block_size = real_size / nprocs;
+        padding = real_size - elementos.size();
+        
+       /* for(int i=1;i<nprocs;i++){
             int start= i*block_size+diferencia;
-            MPI_Bcast( &block_size , 1 , MPI_INT , i , MPI_COMM_WORLD);
+           
           //  MPI_Send( &block_size , 1 , MPI_INT , i , 0 , MPI_COMM_WORLD);
            // MPI_Send( &data[start] , block_size , MPI_INT , i , 1 , MPI_COMM_WORLD);
-            MPI_Scatter( &data[start] , block_size , MPI_INT , MPI_IN_PLACE , 0 , MPI_INT , 0 , MPI_COMM_WORLD);
+           
 
-        }
+        }*/
+         MPI_Bcast( &block_size , 1 , MPI_INT , 0 , MPI_COMM_WORLD);
+         MPI_Scatter( data , block_size , MPI_INT , MPI_IN_PLACE , 0 , MPI_INT , 0 , MPI_COMM_WORLD);
         
         int maximos[nprocs];
-        maximos[0]= max(data, block_size+diferencia);
+        maximos[0]= max(data, block_size);
 
         for(int i=1;  i<nprocs; i++){
             MPI_Recv( &maximos[i] , 1 , MPI_INT , i , 1 , MPI_COMM_WORLD , MPI_STATUS_IGNORE);
